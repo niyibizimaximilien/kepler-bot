@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kepler CampusBot - Your College Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-green: #439947;
+            --primary-blue: #2A527A;
+            --text-dark: #1e293b;
+            --text-medium: #475569;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 0.625rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .btn-primary:hover {
+            background-color: #367a3a;
+            transform: translateY(-1px);
+        }
+        
+        .feature-card {
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-light);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .feature-card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+        
+        .feature-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .chat-container {
+            max-width: 100%;
+            width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        @media (min-width: 768px) {
+            .chat-container {
+                width: 28rem;
+            }
+        }
+        
+        .chat-bubble {
+            border-radius: 1rem;
+            padding: 0.75rem 1.25rem;
+            max-width: 80%;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            font-size: 0.9375rem;
+        }
+        
+        .user-bubble {
+            background-color: var(--primary-green);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 0.25rem;
+        }
+        
+        .bot-bubble {
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+            margin-right: auto;
+            border-bottom-left-radius: 0.25rem;
+        }
+        
+        .mobile-menu {
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+        
+        .mobile-menu.open {
+            max-height: 100vh;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6">
+            <nav class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <div class="bg-[var(--primary-green)] text-white p-2 rounded-lg mr-3">
+                        <i class="fas fa-robot text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-[var(--primary-blue)]">Kepler CampusBot</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="font-medium text-gray-700 hover:text-[var(--primary-green)]">Home</a>
+                    <a href="#" class="font-medium text-gray-700 hover:text-[var(--primary-green)]">Features</a>
+                    <a href="#" class="font-medium text-gray-700 hover:text-[var(--primary-green)]">FAQ</a>
+                    <a href="#" class="font-medium text-gray-700 hover:text-[var(--primary-green)]">Contact</a>
+                    <button class="btn-primary px-6 py-2">
+                        Try Now <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+                
+                <button id="mobile-menu-button" class="md:hidden text-gray-700">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </nav>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu md:hidden bg-white">
+                <div class="flex flex-col space-y-4 pb-4">
+                    <a href="#" class="font-medium text-gray-700 hover:text-[var(--primary-green)] py-2 px-4">Home</a>
+                    <a href="#" class="font-medium text-gray-700 hover:text-[var(--primary-green)] py-2 px-4">Features</a>
+                    <a href="#" class="font-medium text-gray-700 hover:text-[var(--primary-green)] py-2 px-4">FAQ</a>
+                    <a href="#" class="font-medium text-gray-700 hover:text-[var(--primary-green)] py-2 px-4">Contact</a>
+                    <button class="btn-primary px-6 py-2 w-full">
+                        Try Now <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-white py-12 md:py-20">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                <div class="lg:w-1/2">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight text-[var(--primary-blue)]">
+                        Your 24/7 Virtual Guide to Kepler College
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Get instant answers to all your campus questions with our AI-powered assistant.
+                    </p>
+                    
+                    <div class="flex flex-col xs:flex-row gap-3 mb-10">
+                        <button class="btn-primary">
+                            <i class="fas fa-comment-dots mr-2"></i> Start Chatting
+                        </button>
+                        <button class="border-2 border-[var(--primary-green)] text-[var(--primary-green)] px-6 py-2 rounded-full font-semibold hover:bg-[var(--primary-green)] hover:text-white transition-colors">
+                            <i class="fas fa-play-circle mr-2"></i> Watch Demo
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="flex -space-x-2">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-700">Trusted by 2,500+ students</p>
+                            <div class="flex text-[var(--primary-green)]">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="text-gray-600 ml-1">4.8/5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2 mt-10 lg:mt-0 flex justify-center">
+                    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200 w-full max-w-md">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-[var(--primary-green)] text-white rounded-full p-2 mr-3">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">CampusBot</h4>
+                                <p class="text-xs text-gray-500">Online</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3 mb-4 max-h-60 overflow-y-auto">
+                            <div class="chat-bubble bot-bubble">
+                                Hi there! I'm CampusBot. How can I help you today?
+                            </div>
+                            <div class="chat-bubble user-bubble">
+                                What time does the library close today?
+                            </div>
+                            <div class="chat-bubble bot-bubble">
+                                The Kepler Library closes at 9:00 PM today. <i class="fas fa-clock ml-1"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center border-t border-gray-200 pt-4">
+                            <input type="text" placeholder="Type your question..." class="flex-grow border border-gray-300 rounded-l-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-[var(--primary-green)]">
+                            <button class="bg-[var(--primary-green)] text-white px-4 rounded-r-full h-10">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-12 md:py-16 bg-gray-50">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-cogs text-[var(--primary-green)] mr-3"></i> How It Works
+                </h2>
+                <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+                    Simple steps to get the information you need, when you need it
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="feature-card bg-white">
+                    <div class="feature-icon bg-[#e6f7e8] text-[var(--primary-green)] mx-auto">
+                        <i class="fas fa-comment-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-center text-gray-800">Ask Your Question</h3>
+                    <p class="text-gray-600 text-center">Type or speak your questions about campus life, policies, or services.</p>
+                </div>
+                
+                <div class="feature-card bg-white">
+                    <div class="feature-icon bg-[#e6f0f7] text-[var(--primary-blue)] mx-auto">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-center text-gray-800">AI Processes</h3>
+                    <p class="text-gray-600 text-center">Our system analyzes your question using Kepler's knowledge base.</p>
+                </div>
+                
+                <div class="feature-card bg-white">
+                    <div class="feature-icon bg-[#e6f7e8] text-[var(--primary-green)] mx-auto">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-center text-gray-800">Get Answer</h3>
+                    <p class="text-gray-600 text-center">Receive accurate, personalized information instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-12 md:py-16 bg-white">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-star text-[var(--primary-green)] mr-3"></i> Key Features
+                </h2>
+                <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+                    Everything you need to navigate campus life with ease
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="feature-card">
+                    <i class="fas fa-clock text-2xl text-[var(--primary-green)] mb-3"></i>
+                    <h4 class="font-bold text-lg mb-2">24/7 Availability</h4>
+                    <p class="text-gray-600">Get answers anytime, day or night, even outside office hours.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-microphone text-2xl text-[var(--primary-blue)] mb-3"></i>
+                    <h4 class="font-bold text-lg mb-2">Voice Commands</h4>
+                    <p class="text-gray-600">Ask questions naturally using voice input for hands-free help.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-file-alt text-2xl text-[var(--primary-green)] mb-3"></i>
+                    <h4 class="font-bold text-lg mb-2">Policy Help</h4>
+                    <p class="text-gray-600">Understand complex policies with simple explanations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-map-marked-alt text-2xl text-[var(--primary-blue)] mb-3"></i>
+                    <h4 class="font-bold text-lg mb-2">Campus Navigation</h4>
+                    <p class="text-gray-600">Find buildings, offices, and services with directions.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-calendar-alt text-2xl text-[var(--primary-green)] mb-3"></i>
+                    <h4 class="font-bold text-lg mb-2">Event Updates</h4>
+                    <p class="text-gray-600">Stay informed about campus events and deadlines.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-question-circle text-2xl text-[var(--primary-blue)] mb-3"></i>
+                    <h4 class="font-bold text-lg mb-2">Instant FAQs</h4>
+                    <p class="text-gray-600">Get answers to common questions without waiting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-12 md:py-16 bg-gray-50">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-quote-left text-[var(--primary-green)] mr-3"></i> Student Feedback
+                </h2>
+                <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+                    See what our students say about their experience
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="feature-card bg-white">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold">Jamie Smith</h4>
+                            <p class="text-sm text-gray-500">Computer Science</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"CampusBot saved me so much time when I needed to find the registrar's office hours. Got the answer instantly!"</p>
+                    <div class="text-[var(--primary-green)]">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="feature-card bg-white">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold">Alex Morgan</h4>
+                            <p class="text-sm text-gray-500">Biology</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"As a new student, I had so many questions. CampusBot helped me navigate campus life easily."</p>
+                    <div class="text-[var(--primary-green)]">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="feature-card bg-white">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold">Taylor Park</h4>
+                            <p class="text-sm text-gray-500">Business</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"The voice input feature is amazing when I'm walking across campus and need quick info."</p>
+                    <div class="text-[var(--primary-green)]">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-12 md:py-16 bg-[var(--primary-blue)] text-white">
+        <div class="container mx-auto px-4 sm:px-6 text-center">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Ready to Try CampusBot?</h2>
+            <p class="text-base sm:text-lg mb-8 max-w-2xl mx-auto">Join thousands of Kepler students getting instant answers to their questions.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-3">
+                <button class="btn-primary bg-white text-[var(--primary-blue)] hover:bg-gray-100">
+                    <i class="fas fa-comment-dots mr-2"></i> Start Chatting Now
+                </button>
+                <button class="border-2 border-white text-white px-6 py-2 rounded-full font-semibold hover:bg-white hover:text-[var(--primary-blue)] transition-colors">
+                    <i class="fas fa-question-circle mr-2"></i> Learn More
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="w-full py-12 bg-gray-900 text-white">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="bg-[var(--primary-green)] text-white rounded-lg p-2 mr-3">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <span class="text-xl font-bold">Kepler CampusBot</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Your 24/7 virtual assistant for all things Kepler College.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white"><i class="fas fa-chevron-right mr-2 text-xs"></i> Home</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white"><i class="fas fa-chevron-right mr-2 text-xs"></i> Features</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white"><i class="fas fa-chevron-right mr-2 text-xs"></i> FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white"><i class="fas fa-chevron-right mr-2 text-xs"></i> Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white"><i class="fas fa-chevron-right mr-2 text-xs"></i> Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white"><i class="fas fa-chevron-right mr-2 text-xs"></i> Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white"><i class="fas fa-chevron-right mr-2 text-xs"></i> Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Contact</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope text-gray-400 mr-2 mt-1"></i>
+                            <span class="text-gray-400">support@keplercampusbot.edu</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt text-gray-400 mr-2 mt-1"></i>
+                            <span class="text-gray-400">(555) 123-4567</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-gray-400 mr-2 mt-1"></i>
+                            <span class="text-gray-400">Kepler College, Student Services Building</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>© 2023 Kepler CampusBot. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                mobileMenu.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
